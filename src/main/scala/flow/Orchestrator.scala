@@ -1,6 +1,8 @@
 package com.github.marcelkoopman.actorflow.flow
 
-import akka.actor.{Actor, ActorLogging, Props}
+
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.routing.FromConfig
 import flow.ServiceActor
 import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FinishedWorkEvt, StartUpMsg, WorkMsg}
 
@@ -19,16 +21,16 @@ object Orchestrator {
 
 private class Orchestrator extends Actor with ActorLogging {
 
-  private val serviceActorA = context.actorOf(ServiceActor.props)
-  private val serviceActorB = context.actorOf(ServiceActor.props)
-  private val serviceActorC = context.actorOf(ServiceActor.props)
+  //private val serviceActor = context.actorOf(FromConfig.props(ServiceActor.props), "ServiceActor")
+  val router1: ActorRef =
+    context.actorOf(FromConfig.props(ServiceActor.props), "router1")
 
   def receive = {
 
     case msg: StartUpMsg => {
 
       for ( a <- 1 to 3) {
-        serviceActorA ! WorkMsg("msg")
+        router1 ! WorkMsg("msg")
       }
     }
 
