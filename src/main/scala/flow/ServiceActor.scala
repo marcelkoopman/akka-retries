@@ -15,9 +15,9 @@ private class ServiceActor extends Actor with ActorLogging {
 
   def receive = {
     case msg:WorkMsg => {
-      log.info("I am "+this)
+      log.info("I am "+this +" got msg " + msg.str)
 
-      throw new NullPointerException("BOOM")
+      //throw new NullPointerException("BOOM")
 
       sender ! FinishedWorkEvt(msg.str)
     }
