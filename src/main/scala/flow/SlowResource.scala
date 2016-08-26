@@ -1,5 +1,7 @@
 package com.github.marcelkoopman.actorflo
 
+import java.util.concurrent.TimeUnit
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
@@ -12,8 +14,8 @@ object SlowResource {
   def doSomeThingSlow(str:String):Future[String] = {
 
     Future {
+      TimeUnit.MILLISECONDS.sleep(10)
       if (Random.nextBoolean()) {
-        Thread.sleep(1400)
         throw new NullPointerException("whoops")
       }
       str.reverse

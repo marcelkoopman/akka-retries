@@ -1,6 +1,7 @@
 package com.github.marcelkoopman.actorflow.flow
 
 
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
@@ -38,9 +39,9 @@ private class Orchestrator extends Actor with ActorLogging {
     case finished: FinishedWork => {
       log.info("Finished: " + finished + " from " + sender().path)
       val workDone = totalWorkDone.incrementAndGet()
-      log.info("Total done {}", workDone)
+      log.info("Total done: {}", workDone)
       if (workDone == totalWork) {
-        log.info("I've done my work, nothing to do here!")
+        log.info("I've done all my work, nothing to do here!")
       }
     }
     case failed: FailedWork => {
@@ -48,8 +49,7 @@ private class Orchestrator extends Actor with ActorLogging {
       val retryCount = retryConfig.retryCount
       if (retryCount == 0) {
         log.info("Retrying {} for the last time", failed.original.str)
-        Thread.sleep(retryConfig.sleepSeconds)
-        sender ! failed.original
+        retry(failed, retryConfig)
       } else if (retryCount >= 0) {
         log.info("Retrying {} retries remaining: {}", failed.original.str, retryCount)
         retry(failed, retryConfig)
@@ -62,8 +62,8 @@ private class Orchestrator extends Actor with ActorLogging {
   }
 
   def retry(failed: FailedWork, retryConfig: RetryConfig): Unit = {
-    log.info("Wait for {} second(s).", retryConfig.sleepSeconds)
-    Thread.sleep(retryConfig.sleepSeconds * 1000)
+    log.info("Wait for {} second(s)...", retryConfig.sleepSeconds)
+    TimeUnit.SECONDS.sleep(retryConfig.sleepSeconds)
     sender ! failed.original
   }
 }
