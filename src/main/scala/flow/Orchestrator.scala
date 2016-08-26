@@ -3,11 +3,10 @@ package com.github.marcelkoopman.actorflow.flow
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import akka.actor.SupervisorStrategy.Stop
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.routing.FromConfig
 import com.github.marcelkoopman.actorflow.ServiceActor
-import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FailedWork, FinishedWork, StartUpMsg, WorkMsg}
+import com.github.marcelkoopman.actorflow.flow.Orchestrator._
 
 /**
   * Created by marcel on 14-8-2016.
@@ -15,10 +14,16 @@ import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FailedWork, Finishe
 object Orchestrator {
   def props: Props = Props(new Orchestrator())
 
+  case class RetryConfig(retryCount: Int, sleepTime: Long)
+
   case class StartUpMsg(str: String)
-  case class WorkMsg(str: String, retryCount: Int)
+
+  case class WorkMsg(str: String, retryConfig: RetryConfig)
+
   case class FinishedWork(str: String)
+
   case class FailedWork(failure: Throwable, original: WorkMsg)
+
 }
 
 private class Orchestrator extends Actor with ActorLogging {
@@ -32,7 +37,7 @@ private class Orchestrator extends Actor with ActorLogging {
   def receive = {
     case msg: StartUpMsg => {
       for (a <- 1 to totalWork) {
-        router2 ! WorkMsg(s"msg$a", 5)
+        router2 ! WorkMsg(s"msg$a", RetryConfig(5, 1000))
       }
     }
     case finished: FinishedWork => {
@@ -45,15 +50,18 @@ private class Orchestrator extends Actor with ActorLogging {
     }
     case failed: FailedWork => {
 
-      val retryCount = failed.original.retryCount
-      if (retryCount >= 0) {
-        if (failed.original.retryCount == 0) {
-          log.info("Retrying {} for the last time", failed.original.str)
-        } else {
-          log.info("Retrying {} retries remaining: {}", failed.original.str, failed.original.retryCount)
-        }
+      val retryConfig = failed.original.retryConfig
+      val retryCount = retryConfig.retryCount
+      if (retryCount == 0) {
+        log.info("Retrying {} for the last time", failed.original.str)
+        Thread.sleep(retryConfig.sleepTime)
         sender ! failed.original
-      } else {
+      } else if (retryCount >= 0) {
+        log.info("Retrying {} retries remaining: {}", failed.original.str, retryCount)
+        Thread.sleep(retryConfig.sleepTime)
+        sender ! failed.original
+      }
+      else {
         log.info("No more retries left for {}", failed.original.str)
         log.error("Finally failed: {} cause: {}", failed.original.str, failed.failure.getLocalizedMessage)
       }
