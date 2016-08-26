@@ -1,4 +1,4 @@
-name := "actorflow"
+name := "akka-retries"
 
 version := "1.0"
 
