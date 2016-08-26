@@ -1,41 +1,35 @@
-package flow
+package com.github.marcelkoopman.actorflow
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.github.marcelkoopman.actorflow.flow.Orchestrator
-import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FinishedWorkEvt, WorkMsg}
+import com.github.marcelkoopman.actorflo.SlowResource
+import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FailedWork, FinishedWorkEvt, WorkMsg}
 
-import scala.concurrent.Future
-import scala.util.{Failure, Random, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by marcel on 14-8-2016.
   */
 object ServiceActor {
-  def props:Props = Props(new ServiceActor())
+  def props: Props = Props(new ServiceActor())
 }
 
 private class ServiceActor extends Actor with ActorLogging {
 
-  import context.dispatcher
-
-
   def receive = {
-    case msg:WorkMsg => {
-      log.info("I am "+this +" got msg " + msg.str)
-
-      val f = Future {
-        throw new NullPointerException("BOOM")
-      }.onFailure {
-        case e:NullPointerException => self ! e
+    case msg: WorkMsg => {
+      val theSender = sender
+      val result = SlowResource.doSomeThingSlow(msg.str)
+      result.onSuccess {
+        case s => {
+          theSender ! FinishedWorkEvt(s)
+        }
       }
 
-      sender ! "OK"
+      result.onFailure {
+        case f => {
+          theSender ! FailedWork(f, msg)
+        }
+      }
     }
-    case ex:Exception => throw ex
-  }
-
-  override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
-    log.info("Restarting because of "+reason.getLocalizedMessage)
-    super.preRestart(reason, message)
   }
 }
