@@ -15,7 +15,9 @@ This will bootstrap the application by sending a start message to the Orchestrat
 Using routing the service(s) will be receiving work, which fail or succeed.
 
 ```
-def receive = {
+private class ServiceActor extends Actor with ActorLogging {
+
+  def receive = {
     case msg: WorkMsg => {
       val theSender = sender
       val result = UnreliableResource.getReversedString(msg.str)
@@ -33,4 +35,7 @@ def receive = {
       }
     }
   }
+
+
+}
 ```  
