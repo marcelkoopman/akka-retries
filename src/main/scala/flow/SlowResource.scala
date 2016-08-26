@@ -12,8 +12,8 @@ object SlowResource {
   def doSomeThingSlow(str:String):Future[String] = {
 
     Future {
-      Thread.sleep(1400)
       if (Random.nextBoolean()) {
+        Thread.sleep(1400)
         throw new NullPointerException("whoops")
       }
       str.reverse
