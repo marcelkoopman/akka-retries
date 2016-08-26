@@ -1,4 +1,4 @@
-package com.github.marcelkoopman.actorflow.flow
+package com.github.marcelkoopman.akka.retries.orchestrator
 
 
 import java.util.concurrent.TimeUnit
@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.routing.FromConfig
 import com.github.marcelkoopman.actorflow.ServiceActor
-import com.github.marcelkoopman.actorflow.flow.Orchestrator._
+import com.github.marcelkoopman.akka.retries.orchestrator.Orchestrator._
 
 /**
   * Created by marcel on 14-8-2016.

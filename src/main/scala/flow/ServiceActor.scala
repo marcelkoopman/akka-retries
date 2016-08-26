@@ -2,7 +2,7 @@ package com.github.marcelkoopman.actorflow
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.github.marcelkoopman.actorflo.SlowResource
-import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FailedWork, FinishedWork, RetryConfig, WorkMsg}
+import com.github.marcelkoopman.akka.retries.orchestrator.Orchestrator._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
