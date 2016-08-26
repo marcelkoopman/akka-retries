@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.routing.FromConfig
-import com.github.marcelkoopman.actorflow.ServiceActor
 import com.github.marcelkoopman.akka.retries.orchestrator.Orchestrator._
+import com.github.marcelkoopman.akka.retries.services.ServiceActor
 
 /**
   * Created by marcel on 14-8-2016.

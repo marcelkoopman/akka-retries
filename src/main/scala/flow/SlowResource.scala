@@ -1,4 +1,4 @@
-package com.github.marcelkoopman.actorflo
+package com.github.marcelkoopman.akka.retries.services
 
 import java.util.concurrent.TimeUnit
 
