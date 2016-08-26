@@ -1,4 +1,4 @@
-# actorflow
+# akka-retries
 Akka messaging retries
 -----------------------
 
