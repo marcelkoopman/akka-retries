@@ -1,8 +1,8 @@
 package com.github.marcelkoopman.akka.retries
 
 import akka.actor.ActorSystem
-import com.github.marcelkoopman.akka.retries.orchestrator.Orchestrator
-import com.github.marcelkoopman.akka.retries.orchestrator.Orchestrator.StartUpMsg
+import akka.retries.orchestrator.Orchestrator
+import akka.retries.orchestrator.Orchestrator.StartUpMsg
 import com.typesafe.config.ConfigFactory
 
 /**

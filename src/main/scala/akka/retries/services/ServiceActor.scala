@@ -1,7 +1,7 @@
-package com.github.marcelkoopman.akka.retries.services
+package akka.retries.services
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.github.marcelkoopman.akka.retries.orchestrator.Orchestrator._
+import akka.retries.orchestrator.Orchestrator._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

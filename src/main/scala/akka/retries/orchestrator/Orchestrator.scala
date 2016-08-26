@@ -1,13 +1,12 @@
-package com.github.marcelkoopman.akka.retries.orchestrator
-
+package akka.retries.orchestrator
 
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.retries.orchestrator.Orchestrator._
+import akka.retries.services.ServiceActor
 import akka.routing.FromConfig
-import com.github.marcelkoopman.akka.retries.orchestrator.Orchestrator._
-import com.github.marcelkoopman.akka.retries.services.ServiceActor
 
 /**
   * Created by marcel on 14-8-2016.
