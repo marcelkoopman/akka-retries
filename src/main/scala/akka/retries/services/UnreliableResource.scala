@@ -9,9 +9,9 @@ import scala.util.Random
 /**
   * Created by marcel on 26-8-2016.
   */
-object SlowResource {
+object UnreliableResource {
 
-  def doSomeThingSlow(str:String):Future[String] = {
+  def getReversedString(str: String): Future[String] = {
 
     Future {
       TimeUnit.MILLISECONDS.sleep(10)

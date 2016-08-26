@@ -17,7 +17,7 @@ private class ServiceActor extends Actor with ActorLogging {
   def receive = {
     case msg: WorkMsg => {
       val theSender = sender
-      val result = SlowResource.doSomeThingSlow(msg.str)
+      val result = UnreliableResource.getReversedString(msg.str)
       result.onSuccess {
         case s => {
           theSender ! FinishedWork(s)
