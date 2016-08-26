@@ -2,7 +2,7 @@ package com.github.marcelkoopman.actorflow
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.github.marcelkoopman.actorflo.SlowResource
-import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FailedWork, FinishedWorkEvt, WorkMsg}
+import com.github.marcelkoopman.actorflow.flow.Orchestrator.{FailedWork, FinishedWork, WorkMsg}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -21,13 +21,14 @@ private class ServiceActor extends Actor with ActorLogging {
       val result = SlowResource.doSomeThingSlow(msg.str)
       result.onSuccess {
         case s => {
-          theSender ! FinishedWorkEvt(s)
+          theSender ! FinishedWork(s)
         }
       }
 
       result.onFailure {
         case f => {
-          theSender ! FailedWork(f, msg)
+          val retryRemaining = msg.retryCount - 1
+          theSender ! FailedWork(f, WorkMsg(msg.str, retryRemaining))
         }
       }
     }
