@@ -13,3 +13,24 @@ When receiving FailedWork, the caller/parent will resend it as a new message.
 The main app is AkkaRetriesApp.
 This will bootstrap the application by sending a start message to the Orchestrator.
 Using routing the service(s) will be receiving work, which fail or succeed.
+
+```
+def receive = {
+    case msg: WorkMsg => {
+      val theSender = sender
+      val result = UnreliableResource.getReversedString(msg.str)
+      result.onSuccess {
+        case s => {
+          theSender ! FinishedWork(s)
+        }
+      }
+
+      result.onFailure {
+        case f => {
+          val retryRemaining = msg.retryConfig.retryCount - 1
+          theSender ! FailedWork(f, WorkMsg(msg.str, RetryConfig(retryRemaining, msg.retryConfig.sleepSeconds)))
+        }
+      }
+    }
+  }
+```  
