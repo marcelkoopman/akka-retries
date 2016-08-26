@@ -13,17 +13,11 @@ import com.github.marcelkoopman.actorflow.flow.Orchestrator._
   */
 object Orchestrator {
   def props: Props = Props(new Orchestrator())
-
-  case class RetryConfig(retryCount: Int, sleepTime: Long)
-
+  case class RetryConfig(retryCount: Int, sleepSeconds: Int)
   case class StartUpMsg(str: String)
-
   case class WorkMsg(str: String, retryConfig: RetryConfig)
-
   case class FinishedWork(str: String)
-
   case class FailedWork(failure: Throwable, original: WorkMsg)
-
 }
 
 private class Orchestrator extends Actor with ActorLogging {
@@ -35,9 +29,10 @@ private class Orchestrator extends Actor with ActorLogging {
   val totalWork = 5
 
   def receive = {
+
     case msg: StartUpMsg => {
       for (a <- 1 to totalWork) {
-        router2 ! WorkMsg(s"msg$a", RetryConfig(5, 1000))
+        router2 ! WorkMsg(s"msg$a", RetryConfig(5, 2))
       }
     }
     case finished: FinishedWork => {
@@ -49,22 +44,26 @@ private class Orchestrator extends Actor with ActorLogging {
       }
     }
     case failed: FailedWork => {
-
       val retryConfig = failed.original.retryConfig
       val retryCount = retryConfig.retryCount
       if (retryCount == 0) {
         log.info("Retrying {} for the last time", failed.original.str)
-        Thread.sleep(retryConfig.sleepTime)
+        Thread.sleep(retryConfig.sleepSeconds)
         sender ! failed.original
       } else if (retryCount >= 0) {
         log.info("Retrying {} retries remaining: {}", failed.original.str, retryCount)
-        Thread.sleep(retryConfig.sleepTime)
-        sender ! failed.original
+        retry(failed, retryConfig)
       }
       else {
         log.info("No more retries left for {}", failed.original.str)
         log.error("Finally failed: {} cause: {}", failed.original.str, failed.failure.getLocalizedMessage)
       }
     }
+  }
+
+  def retry(failed: FailedWork, retryConfig: RetryConfig): Unit = {
+    log.info("Wait for {} second(s).", retryConfig.sleepSeconds)
+    Thread.sleep(retryConfig.sleepSeconds * 1000)
+    sender ! failed.original
   }
 }

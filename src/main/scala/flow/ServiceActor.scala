@@ -28,7 +28,7 @@ private class ServiceActor extends Actor with ActorLogging {
       result.onFailure {
         case f => {
           val retryRemaining = msg.retryConfig.retryCount - 1
-          theSender ! FailedWork(f, WorkMsg(msg.str, RetryConfig(retryRemaining, msg.retryConfig.sleepTime)))
+          theSender ! FailedWork(f, WorkMsg(msg.str, RetryConfig(retryRemaining, msg.retryConfig.sleepSeconds)))
         }
       }
     }
