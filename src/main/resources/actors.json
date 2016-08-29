@@ -1,0 +1,51 @@
+{
+  "name": "actorSystem",
+  "children": [
+    {
+      "name": "Orchestrator",
+      "children": [
+        {
+          "name": "route1",
+          "children": [
+            {
+              "name": "ServiceActor1",
+              "size": 2000,
+              "children": [
+                {
+                  "name": "UnreliableResource"
+                }
+              ]
+            },
+            {
+              "name": "ServiceActor2",
+              "size": 2000,
+              "children": [
+                {
+                  "name": "UnreliableResource"
+                }
+              ]
+            },
+            {
+              "name": "ServiceActor3",
+              "size": 2000,
+              "children": [
+                {
+                  "name": "UnreliableResource"
+                }
+              ]
+            },
+            {
+              "name": "ServiceActor4",
+              "size": 2000,
+              "children": [
+                {
+                  "name": "UnreliableResource"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
