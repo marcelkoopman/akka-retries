@@ -1,27 +1,41 @@
 {
-  "name": "actorSystem",
+  "name": "AKA",
   "children": [
     {
-      "name": "Orchestrator",
+      "name": "processor",
       "children": [
         {
-          "name": "Route1",
+          "name": "werkgever",
           "children": [
             {
-              "name": "ServiceActor1",
-              "size": 3938
+              "name": "registreer",
+              "size": 500
             },
             {
-              "name": "ServiceActor2",
-              "size": 3812
+              "name": "wijzig",
+              "size": 500
+            }
+          ]
+        },
+        {
+          "name": "akka-http",
+          "children": [
+            {
+              "name": "contract",
+              "size": 5000
             },
             {
-              "name": "ServiceActor3",
-              "size": 6714
-            },
+              "name": "basisgegevens",
+              "size": 5000
+            }
+          ]
+        },
+        {
+          "name": "overige",
+          "children": [
             {
-              "name": "ServiceActor4",
-              "size": 743
+              "name": "deelnemers",
+              "size": 5000
             }
           ]
         }

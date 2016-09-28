@@ -26,11 +26,14 @@ private class Orchestrator extends Actor with ActorLogging {
     context.actorOf(FromConfig.props(ServiceActor.props), "router2")
 
   val totalWorkDone = new AtomicInteger
-  val totalWork = 5
+  val totalWork = 5000
 
   def receive = {
 
     case msg: StartUpMsg => {
+      for (child <- context.children) {
+        log.info("I have child {}", child.path)
+      }
       for (a <- 1 to totalWork) {
         router2 ! WorkMsg(s"msg$a", RetryConfig(5, 2))
       }
@@ -57,6 +60,9 @@ private class Orchestrator extends Actor with ActorLogging {
         log.info("No more retries left for {}", failed.original.str)
         log.error("Finally failed: {} cause: {}", failed.original.str, failed.failure.getLocalizedMessage)
       }
+    }
+    case msg: Any => {
+      log.info("Received {}", msg.getClass)
     }
   }
 

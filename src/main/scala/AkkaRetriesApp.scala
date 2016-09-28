@@ -3,6 +3,7 @@ package com.github.marcelkoopman.akka.retries
 import akka.actor.ActorSystem
 import akka.retries.orchestrator.Orchestrator
 import akka.retries.orchestrator.Orchestrator.StartUpMsg
+import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 
 /**
@@ -16,7 +17,11 @@ object AkkaRetriesApp extends App {
     val system = ActorSystem("akkaRetriesSystem", config.getConfig("akkaRetriesSystem"))
 
     val orchestrator = system.actorOf(Orchestrator.props, "orchestrator")
+    import scala.concurrent.duration._
+    implicit val timeout = Timeout(5 seconds)
     orchestrator ! StartUpMsg("go")
+
+
   }
 
 }
